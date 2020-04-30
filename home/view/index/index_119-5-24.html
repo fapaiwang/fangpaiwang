@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{$seo.title}</title>
+    <meta name="keywords" content="{$seo.keys}" />
+    <meta name="description" content="{$seo.desc}" />
+    <script>
+        var browser = {
+            versions: function() {
+                var u = navigator.userAgent, app = navigator.appVersion;
+                return {     //移动终端浏览器版本信息
+                    trident: u.indexOf('Trident') > -1, //IE内核
+                    presto: u.indexOf('Presto') > -1, //opera内核
+                    webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                    gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                    mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                    ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                    android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览器
+                    iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
+                    iPad: u.indexOf('iPad') > -1, //是否iPad
+                    webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
+                };
+            } (),
+            language: (navigator.browserLanguage || navigator.language).toLowerCase()
+        };
+        if (browser.versions.mobile) {
+            window.location.href = "{:config('mobile_domain')}"+window.location.pathname;
+        }
+    </script>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="__CSS__/reset.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/input.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css">
+    <script type="text/javascript" src="__STATIC__/js/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="index">
+    <div class="topBar">
+        <div class="comWidth clearfix">
+            <div class="logo fl">
+                <a href="{:url('Index/index')}" title="{$site.title}">
+                    <img src="{$site.pc_logo_white}" alt="{$site.title}" />
+                </a>
+            </div>
+            <div class="fl sele_city">
+                <a href="javascript:;"  class="sele_city_btn">{$cityInfo['name']}<img src="__IMG__/icon/icon15.png" alt="" class="icon"></a>
+                <div class="city_list clearfix">
+                    <i class="city-close">关闭</i>
+                    {if condition="$site.city_domain eq 1"}
+                    <dl class="clearfix">
+                        <dd><a href="{:url($controller.'/index@www')}">全部</a></dd>
+                    </dl>
+                    {volist name='top_nav_city.city' id='vo'}
+                    <dl class="clearfix">
+                        <dt class="bold">{$key}</dt>
+                        {volist name='vo' id='val'}
+                        <dd {if condition="$val.is_hot eq 1"}class="hot"{/if}><a href="{:url($controller.'/index@'.$val['domain'])}" title="{$val.name}">{$val.name}</a></dd>
+                        {/volist}
+                    </dl>
+                    {/volist}
+                    {else /}
+                    <dl class="clearfix">
+                        <dd><a href="{:url($controller.'/index',['area'=>'all'])}">全部</a></dd>
+                    </dl>
+                    {volist name='top_nav_city.city' id='vo'}
+                    <dl class="clearfix">
+                        <dt class="bold">{$key}</dt>
+                        {volist name='vo' id='val'}
+                        <dd {if condition="$val.is_hot eq 1"}class="hot"{/if}><a href="{:url($controller.'/index',['area'=>$val['id']])}" title="{$val.name}">{$val.name}</a></dd>
+                        {/volist}
+                    </dl>
+                    {/volist}
+                    {/if}
+                </div>
+            </div>
+            <div class="navBar fl">
+                <ul class="nav_list fl">
+                    {volist name='menu' id='vo'}
+                    {if condition='$vo.pos eq 1'}
+                    {notempty name='vo.url'}
+                    {php}$url = $vo['url'];{/php}
+                    {else /}
+                    {notempty name='vo.alias'}
+                    {php}
+                    $url=url($vo['model'].'/'.$vo['action'],['cate'=>$vo['alias']]);
+                    {/php}
+                    {else /}
+                    {php}
+                    $url=url($vo['model'].'/'.$vo['action']);
+                    {/php}
+                    {/notempty}
+                    {/notempty}
+                    <li {if condition="$vo['model'] eq $cur_url"}class="active"{/if}>
+                    <a href="{$url}" title="{$vo.title}"  target="{$vo.open_type}">{$vo.title}</a>
+                    </li>
+                    {/if}
+                    {/volist}
+                </ul>
+            </div>
+            <div class="log_link fr">
+                {notempty name='userInfo'}
+                <!-- 已登录状态 -->
+                <div class="loged">
+                    <div class="user_info">
+                        <img src="{:getAvatar($userInfo['id'],30)}" width="30" height="30" alt="">
+                        <span class="name">{:hideStr($userInfo['nick_name'])}</span>
+                    </div>
+                    <div class="slide_tog" style="display:none;">
+                        <a href="{:url('user.index/index')}">用户中心</a>
+                        <a href="{:url('Login/logout')}">退出登录</a>
+                    </div>
+                </div>
+                {else /}
+                <!-- 未登录状态 -->
+                <div class="not_log">
+                    <a href="{:url('Login/index')}">登录</a>
+                    /
+                    <a href="{:url('Login/register')}">注册</a>
+                </div>
+                {/notempty}
+            </div>
+        </div>
+    </div>
+    <!-- banner S -->
+    <div class="banner" >
+        <div class="banner-2">
+            <script src="/static/poster_js/1.js"></script>
+            <div class="search-box">
+                <div class="opacity"></div>
+                <div class="search-content">
+                    <div class="search-type">
+                        <a href="javascript:;" class="active" data-uri="{:url('House/index')}">法拍</a>
+                        <a href="javascript:;" data-uri="{:url('Second/index')}">国有</a>
+                        <a href="javascript:;" data-uri="{:url('Rental/index')}">涉诉</a>
+                        <a href="javascript:;" data-uri="{:url('Estate/index')}">委托</a>
+                    </div>
+                    <div class="search-input clearfix">
+                        <form action="{:url('House/index')}" method="get" id="form">
+                            <input type="text" name="keyword" class="search-input-text fl" placeholder="输入关键词搜索">
+                            <a href="javascript:;" class="search-btn fl">搜索</a>
+                        </form>
+                    </div>
+                    <div class="search-keyword">
+                        <span>热门搜索：</span>
+                        {fang:lists table='link' filed='url,name' where='status=1 and cate_id=2' order='ordid asc,id desc' limit='6' id='data'}
+                        <a href="{$data.url}" title="{$data.name}" target="_blank">{$data.name}</a>
+                        {/fang:lists}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- banner E -->
+    <!-- menu S -->
+    <div class="label_menu">
+        <div class="comWidth clearfix">
+            <div class="item fl">
+                <div class="tit">
+                    <h3>买房</h3>
+                    <div class="l"></div>
+                </div>
+                <div class="link">
+                    <a href="{:url('House/index')}">新房</a>
+                    <a href="{:url('Second/index')}">二手房</a>
+                    <a href="{:url('House/index',['discount'=>1])}">优惠</a>
+                </div>
+            </div>
+            <div class="item fl">
+                <div class="tit">
+                    <h3>我要卖房</h3>
+                    <div class="l"></div>
+                </div>
+                <div class="link">
+                    <a href="{:url('user.index/index')}">我要卖房</a>
+                    <a href="{:url('user.index/index')}">我要出租</a>
+                </div>
+            </div>
+            <div class="item fl">
+                <div class="tit">
+                    <h3>租房</h3>
+                    <div class="l"></div>
+                </div>
+                <div class="link">
+                    {volist name='rental_type' id='vo'}
+                    {if condition='$i lt 5'}
+                    <a href="{:url('Rental/index',['type'=>$vo['id']])}">{$vo.name}</a>
+                    {/if}
+                    {/volist}
+                </div>
+            </div>
+            <div class="item fl">
+                <div class="tit">
+                    <h3>工具</h3>
+                    <div class="l"></div>
+                </div>
+                <div class="link">
+                    <a href="{:url('Map/index')}">地图找房</a>
+                    <a href="{:url('Tools/index')}">房贷计算</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- menu E -->
+    <!-- 内容 S-->
+    <div class="wrap">
+        <div class="comWidth">
+            <!-- 热门房子 S -->
+            <div class="hot_house">
+                <script src="/static/poster_js/2.js"></script>
+            </div>
+            <!-- 热门房子 E -->
+            {notempty name='group'}
+            <div class="rent_house cm_wrap">
+                <div class="head clearfix">
+                    <h2 class="icon-group fl">团购优惠</h2>
+                </div>
+                <div class="content">
+                    <!-- 楼盘列表 S -->
+                    <div class=" build_list">
+                        <ul class="clearfix">
+                            {volist name='group' id='vo'}
+                            <li>
+                                <a href="{:url('Group/detail',['id'=>$vo['id']])}" title="{$vo.title}">
+									<span class="img">
+										<img src="__IMG__/nopic.jpg" data-original="{:thumb($vo['img'],200,140)}" class="lazy" width="200" height="140" alt="{$vo.title}">
+										<span class="img_ft">
+											<span class="txt_box clearfix">
+												<span class="tit">{$vo.title}</span>
+											</span>
+											<span class="tit_bg"></span>
+										</span>
+									</span>
+                                    <span class="ft clearfix">
+										<span class="price">团购价：{$vo.price}{:config('filter.house_price_unit')}</span>
+									</span>
+									<span class="ft clearfix nowarp">
+										{$vo.discount}
+									</span>
+                                    <span class="ft clearfix nowarp">
+									  <span class="group_time time-remain" data-down="{$vo.end_time-time()}">剩余时间 <i class="text20" time_id="d">0</i> 天 <i class="text20" time_id="h">0</i> 小时 <i class="text20" time_id="m">0</i> 分钟  <i class="text20" time_id="s">0</i> 秒</span>
+									</span>
+                                </a>
+                            </li>
+                            {/volist}
+                        </ul>
+                    </div>
+                    <!-- 楼盘列表 E -->
+                </div>
+            </div>
+            {/notempty}
+            <!--资讯中心-->
+            <div class="news cm_wrap">
+                <div class="head clearfix">
+                    <h2 class="icon-news fl">资讯中心</h2>
+                    <ul class="r_nav fr">
+                        {fang:lists table='article_cate' where='status=1 and pid=0' order='ordid asc,id desc' field='id,name' id='data'}
+                        <li style="margin-left:15px;">
+                            <a href="{:url('News/index',['cate'=>$data['id']])}" target="_blank">{$data.name}</a>
+                        </li>
+                        {/fang:lists}
+                    </ul>
+                </div>
+                <div class="content clearfix">
+                    <div class="news-left fl">
+                        <div class="news-left-slide">
+                            <script type="text/javascript" src="__STATIC__/poster_js/6.js"></script>
+                        </div>
+                        <ul class="news-left-list clearfix">
+                            {fang:lists table='article' where='status=1 and cate_id=4' order='create_time desc' field='id,img,title' limit='2' id='data'}
+                            <li>
+                                <a href="{:url('News/detail',['id'=>$data['id']])}" target="_blank" title="{$data.title}">
+									<span class="img">
+										<img src="__IMG__/nopic.jpg" data-original="{:thumb($data['img'],180,140)}" class="lazy" alt="{$data.title}" width="180" height="140">
+										<span class="img_ft">
+											<span class="txt_box clearfix">
+												<span class="tit fl">{$data.title}</span>
+											</span>
+											<span class="tit_bg"></span>
+										</span>
+									</span>
+                                </a>
+                            </li>
+                            {/fang:lists}
+                        </ul>
+                    </div>
+                    <ul class="news-center fl">
+                        {fang:lists table='article' field='id,title,cate_id,description' where='status=1' order='create_time desc' limit='10' id='data'}
+                        {if condition='$i eq 1'}
+                        <li>
+                            <h2>
+                                <a href="{:url('News/detail',['id'=>$data['id']])}" title="{$data.title}" target="_blank">{$data.title}</a>
+                            </h2>
+                            <p>
+                                {:msubstr($data['description'],0,100)}
+                            </p>
+                        </li>
+                        {else /}
+                        <li class="nowarp">
+                            <a href="{:url('News/index',['cate'=>$data['cate_id']])}" title="{:getCateName('articleCate',$data['cate_id'])}" target="_blank">{:getCateName('articleCate',$data['cate_id'])}</a> | <a href="{:url('News/detail',['id'=>$data['id']])}" title="{$data.title}" target="_blank">{$data.title}</a>
+                        </li>
+                        {/if}
+                        {/fang:lists}
+                    </ul>
+                    <div class="news-right build_shoppers fr">
+                        <div class="r_box">
+                            <div class="sct_item buy_way">
+                                <h3>{:getCateName('articleCate',5)}</h3>
+                                <ul class="list" style="height:auto;">
+                                    {fang:lists table='article' field='id,title' where='status=1 and cate_id=5' order='ordid asc,id desc' limit='13' id='data'}
+                                    <li class="clearfix"><a href="{:url('News/detail',['id'=>$data['id']])}" title="{$data.title}" target="_blank">{$data.title}</a></li>
+                                    {/fang:lists}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--资讯中心-->
+            <div class="poster-margin-top">
+                <script type="text/javascript" src="__STATIC__/poster_js/7.js"></script>
+            </div>
+            <!-- 新房 S -->
+           
+            <!-- 新房 E -->
+            <!-- 楼盘导购 S -->
+          
+            <!-- 楼盘导购 E -->
+            {notempty name='second_house'}
+            <!-- 二手房 S -->
+            <div class="sed_house cm_wrap ">
+                <div class="head clearfix">
+                    <h2 class="fl">房源推荐</h2>
+                </div>
+                <div class="content clearfix">
+                    <!-- 广告图 S -->
+                    <div class="l_box fl ads_img">
+                        <script src="/static/poster_js/3.js"></script>
+                    </div>
+                    <!-- 广告图 E-->
+                    <!-- 楼盘列表 S -->
+                    <div class="c_box build_list fl">
+                        <ul class="clearfix">
+                            {volist name='second_house' id='vo'}
+                            <li>
+                                <a href="{:url('Second/detail',['id'=>$vo['id']])}" title="{$vo.title}">
+									<span class="img">
+										<img src="__IMG__/nopic.jpg" data-original="{:thumb($vo['img'],200,140)}" class="lazy" width="200" height="140" alt="{$vo.title}">
+										<span class="img_ft">
+											<span class="txt_box clearfix">
+												<span class="tit fl">{$vo.estate_name}</span>
+												<span class="area fr">{:getCityName($vo['city'])}</span>
+											</span>
+											<span class="tit_bg"></span>
+										</span>
+									</span>
+									<span class="ft clearfix">
+										<span class="fl type_area nowarp" style="width:100px;">{$vo.room}室{$vo.living_room}厅-{$vo.acreage}{:config('filter.acreage_unit')}</span>
+										<span class="fr price">{$vo.average_price}{:config('filter.second_price_unit')}</span>
+									</span>
+                                </a>
+                            </li>
+                            {/volist}
+                        </ul>
+                    </div>
+                    <!-- 楼盘列表 E -->
+                    <!-- 优秀导购员 S -->
+                    <div class="r_box top_director fr">
+                        <h3>优秀导购员</h3>
+                        <ul class="list">
+                            {volist name='broker' id='vo'}
+                            <li class="clearfix">
+                                <div class="l_con tx_img fl">
+                                    <a href="{:url('Broker/second',['id'=>$vo['id']])}" title="{$vo.nick_name}">
+                                        <img src="{:getAvatar($vo['id'],45)}" width="50" height="50" alt="">
+                                    </a>
+                                </div>
+                                <div class="c_con fl">
+                                    <p class="name"><a href="{:url('Broker/second',['id'=>$vo['id']])}" title="{$vo.nick_name}">{$vo.nick_name}</a></p>
+                                    <p class="sell_data">历史成交{$vo.userInfo.history_complate}套</p>
+                                </div>
+                                <div class="r_con fr">
+                                    <p class="mark">综合评分<b>{$vo.userInfo.point}</b></p>
+                                    <p class="rc_look_data">最近带看{$vo.userInfo.looked}套</p>
+                                </div>
+                            </li>
+                            {/volist}
+                        </ul>
+                        <div class="ft_link clearfix">
+                            <a href="{:url('user.index/index')}" class="fl">我要卖房</a>
+                            <a href="{:url('user.index/index')}" class="fr">我要出租</a>
+                        </div>
+                    </div>
+                    <!-- 优秀导购员 E -->
+                </div>
+            </div>
+            <!-- 二手房 E -->
+            {/notempty}
+            {notempty name='rental_house'}
+            <!-- 精品租房 S -->
+            <div class="rent_house cm_wrap">
+                <div class="head clearfix">
+                    <h2 class="fl">精品租房</h2>
+                </div>
+                <div class="content">
+                    <!-- 楼盘列表 S -->
+                    <div class=" build_list">
+                        <ul class="clearfix">
+                            {volist name='rental_house' id='vo'}
+                            <li>
+                                <a href="{:url('Rental/detail',['id'=>$vo['id']])}" title="{$vo.title}">
+									<span class="img">
+										<img src="__IMG__/nopic.jpg" data-original="{:thumb($vo['img'],200,140)}" class="lazy" width="200" height="140" alt="{$vo.title}">
+										<span class="img_ft">
+											<span class="txt_box clearfix">
+												<span class="tit fl">{$vo.estate_name}</span>
+												<span class="area fr">{:getCityName($vo['city'])}</span>
+											</span>
+											<span class="tit_bg"></span>
+										</span>
+									</span>
+									<span class="ft clearfix">
+										<span class="fl type_area">{$vo.room}室{$vo.living_room}厅-{$vo.acreage}{:config('filter.acreage_unit')}</span>
+										<span class="fr price">{$vo.price}{:config('filter.rental_price_unit')}</span>
+									</span>
+                                </a>
+                            </li>
+                            {/volist}
+                        </ul>
+                    </div>
+                    <!-- 楼盘列表 E -->
+                </div>
+            </div>
+            <!-- 精品租房 E -->
+            {/notempty}
+            <!-- 新盘涨幅&&房价走势&&二手涨幅&&房价走势&&楼盘活动 S-->
+            <div class="cm_wrap order_modl clearfix">
+                <!-- 新盘涨幅&&房价走势 S-->
+                <div class="l_area sct house_float fl">
+                    <div class="head clearfix" id="house_tab">
+                        <div class="tit fl active">
+                            <h3><a href="javascript:;">新盘涨幅</a></h3>
+                            <div class="b_l"></div>
+                        </div>
+                        <div class="tit fl">
+                            <h3>房价走势</h3>
+                            <div class="b_l"></div>
+                        </div>
+                    </div>
+                    <div class="m_con" id="house_content">
+                        <ul class="list">
+                            {volist name='ups_downs_house' id='vo'}
+                            <li class="clearfix">
+                                <i class="num"><img src="__IMG__/icon/num{$i}.jpg" alt=""></i>
+                                <a href="{:url('House/detail',['id'=>$vo['id']])}" title="{$vo.title}" class="name fl">{$vo.title}</a>
+                                <span class="price fl"><b>{$vo.price}</b>{$vo.unit}</span>
+                                {if condition='$vo.ratio gt 0'}
+                                <span class="price_float fl">↑ {$vo.ratio}%</span>
+                                {else /}
+                                <span class="price_float down fl">↓ {:abs($vo['ratio'])}%</span>
+                                {/if}
+                            </li>
+                            {/volist}
+                        </ul>
+                        <div class="esf_chart" id="house" data-uri="{:url('Api/getHousePrice')}" style="display:none;">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 新盘涨幅&&房价走势 E-->
+                <!-- 二手涨幅 && 房价走势 S -->
+                <div class="c_area sct fl trend_table">
+                    <div class="head clearfix" id="second_tab">
+                        <div class="tit fl active">
+                            <h3>二手涨幅</h3>
+                            <div class="b_l"></div>
+                        </div>
+                        <div class="tit fl">
+                            <h3>房价走势</h3>
+                            <div class="b_l"></div>
+                        </div>
+                    </div>
+                    <div class="m_con" id="second_content">
+                        <ul class="list">
+                            {volist name='ups_downs_second_house' id='vo'}
+                            <li class="clearfix">
+                                <i class="num"><img src="__IMG__/icon/num{$i}.jpg" alt=""></i>
+                                <a href="{:url('Second/detail',['id'=>$vo['id']])}" title="{$vo.title}" class="name fl">{$vo.title}</a>
+                                <span class="price fl"><b>{$vo.average_price}</b>{:config('filter.second_price_unit')}</span>
+                                {if condition='$vo.ratio gt 0'}
+                                <span class="price_float fl">↑ {$vo.ratio}%</span>
+                                {else /}
+                                <span class="price_float down fl">↓ {:abs($vo['ratio'])}%</span>
+                                {/if}
+                            </li>
+                            {/volist}
+                        </ul>
+                        <div class="esf_chart" id="second_house" data-uri="{:url('Api/getSecondPrice')}" style="display:none;">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 二手涨幅 && 房价走势 E -->
+                <!-- 楼盘活动 S -->
+                <div class="r_area sct build_actv fr">
+                    <div class="head clearfix">
+                        <div class="tit fl active">
+                            <h3>{:getCateName('articleCate',5)}</h3>
+                            <div class="b_l"></div>
+                        </div>
+                    </div>
+                    <div class="m_con">
+                        <ul class="list">
+                            {volist name='news_cate_5' id='vo'}
+                            <li class="clearfix">
+                                <i class="num"><img src="__IMG__/icon/num{$i}.jpg" alt=""></i>
+                                <a href="{:url('News/detail',['id'=>$vo['id']])}" title="{$vo.title}" class="name fl">{$vo.title}</a>
+                            </li>
+                            {/volist}
+                        </ul>
+                    </div>
+                </div>
+                <!-- 楼盘活动 E -->
+            </div>
+            <!-- 新盘涨幅&&房价走势&&二手涨幅&&房价走势&&楼盘活动 E-->
+        </div>
+    </div>
+    <!-- 内容 E-->
+</div>
+<div class="footer">
+    {include file='public/footer' /}
+</div>
+<script type="text/html" id="template">
+    {{# for(var i = 0, len = d.length; i < len; i++){ }}
+    <li>
+        <a href="{{d[i].url}}" target="_blank">
+            <span>
+                <em>{{d[i].price}}{{d[i].unit}}</em>
+                 {{d[i].title}}
+            </span>
+            <span class="address">
+                {{d[i].address}}
+            </span>
+        </a>
+    </li>
+    {{# } }}
+</script>
+<script type="text/javascript" src="__STATIC__/js/layer/laytpl.js"></script>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script type="text/javascript" src="__JS__/placeholder.js"></script>
+<script type="text/javascript" src="__JS__/echarts.common.min.js"></script>
+<script type="text/javascript" src="__JS__/common.js"></script>
+<script src="__STATIC__/js/plugins/jquery.lazyload.js"></script>
+
+<script>
+    $(function(){
+        $('#tab-1 li').on('click',function(){
+            $(this).addClass('active').siblings().removeClass('active');
+            var index = $(this).index(),box = $('#house-content-box').children().hide().eq(index);
+            box.show();
+            var i = box.find('img'),s = i.attr('src'),o = i.data('original');
+            if(s != o)
+            {
+                $("img.lazy").lazyload({
+                    threshold : 100,
+                    effect : "fadeIn",
+                    event: "showstop"
+                });
+            }
+        });
+        $('#tab-2 li').on('click',function(){
+            $(this).addClass('active').siblings().removeClass('active');
+            var index = $(this).index(),box = $('#content-box').children().hide().eq(index);
+            box.show();
+            var i = box.find('img'),s = i.attr('src'),o = i.data('original');
+            if(s != o)
+            {
+                $("img.lazy").lazyload({
+                    threshold : 100,
+                    effect : "fadeIn",
+                    event: "showstop"
+                });
+            }
+        });
+        $("#second_tab .tit").on('click',function(){
+            var index = $(this).index();
+            $(this).addClass('active').siblings().removeClass('active');
+            $("#second_content").children().hide().eq(index).show();
+        });
+        $("#house_tab .tit").on('click',function(){
+            var index = $(this).index();
+            $(this).addClass('active').siblings().removeClass('active');
+            $("#house_content").children().hide().eq(index).show();
+        });
+        $("img.lazy").lazyload({
+            threshold : 100,
+            effect : "fadeIn"
+            //event: "scrollstop"
+        });
+    });
+</script>
+<script>
+    $(function(){
+        drawBroken('house','新盘价格走势');
+        drawBroken('second_house','二手房价格走势');
+        $("#keyword").on('keyup click',function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var keyword = $(this).val(),url = $(this).data('uri'),box = $('#search-box');
+            $.get(url,{keyword: $.trim(keyword)},function(result){
+                if(result.code == 1)
+                {
+                    var gettpl = document.getElementById('template').innerHTML;
+                    laytpl(gettpl).render(result.data, function(html){
+                        $('#search-box').html(html);
+                    });
+                    box.show();
+                }else{
+                    box.hide();
+                }
+            });
+        });
+        $('body').on('click',function(e){
+
+            $('#search-box').hide();
+        });
+        $(".search-type a").on('click',function(){
+           var url = $(this).data('uri');
+            $(this).addClass('active').siblings().removeClass('active');
+            $("#form").attr('action',url);
+        });
+        $(".search-btn").on('click',function(){
+            $("#form").submit();
+        });
+        $('.subscribe-btn').on('click',function(){
+            var user_name = $('#user_name'),mobile = $('#mobile'),house_name = $('#house_name').val(),
+                    reg   = /^1[3456789][0-9]{9}$/,url = $(this).data('uri'),token = $("input[name='__token__']").val();
+                if(!user_name.val())
+                {
+                    layer.msg('请填写您的姓名',{icon:2});
+                    user_name.focus();
+                    return false;
+                }else if(!reg.test(mobile.val())){
+                    layer.msg('请填写正确的手机号码',{icon:2});
+                    mobile.focus();
+                    return false;
+                }else{
+                    var param = {
+                      user_name : user_name.val(),
+                        mobile  : mobile.val(),
+                        house_name : house_name,
+                        model   : 'house',
+                        check_sms : 'no'
+                    };
+                    $.post(url,param,function(result){
+                        if(result.code == 1)
+                        {
+                            document.form.reset();
+                            layer.msg(result.msg,{icon:1});
+                        }else{
+                            layer.msg(result.msg,{icon:2});
+                        }
+                    });
+                }
+        });
+        $("#subscribe").Scroll({line:4,speed:1000,timer:3000});
+    });
+    function drawBroken(id,name)
+    {
+    	if(!document.getElementById(id)){return;}
+        var dom = document.getElementById(id);
+        var myChart = echarts.init(dom);
+        var url = dom.getAttribute('data-uri');
+        myChart.showLoading({
+            text: '正在努力的读取数据中...'
+        });
+        var datas = '';
+        var title = '';
+        $.ajaxSettings.async = false;
+        $.get(url,function(data){
+            if(data.code==1){
+                title = data.month;
+                datas = data.data;
+            }
+        });
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: ''
+            },
+            tooltip: {},
+            legend: {
+                data:[]
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                top: '5%',
+                containLabel: true
+            },
+            xAxis: {
+                data: title
+            },
+            yAxis: {},
+            series: [{
+                name: '均价({:config("filter.second_price_unit")})',
+                type: 'line',
+                data: datas
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        myChart.hideLoading();
+    }
+    setTimeout(takeCount,1000);
+    function takeCount() {
+        setTimeout("takeCount()", 1000);
+        $(".time-remain").each(function(){
+            var obj = $(this);
+            var tms = obj.data("down");
+            if (tms>0) {
+                tms = parseInt(tms)-1;
+                var days = Math.floor(tms / (1 * 60 * 60 * 24));
+                var hours = Math.floor(tms / (1 * 60 * 60)) % 24;
+                var minutes = Math.floor(tms / (1 * 60)) % 60;
+                var seconds = Math.floor(tms / 1) % 60;
+
+                if (days < 0) days = 0;
+                if (hours < 0) hours = 0;
+                if (minutes < 0) minutes = 0;
+                if (seconds < 0) seconds = 0;
+                obj.find("[time_id='d']").html(days);
+                obj.find("[time_id='h']").html(hours);
+                obj.find("[time_id='m']").html(minutes);
+                obj.find("[time_id='s']").html(seconds);
+                obj.data("down",tms);
+            }
+        });
+    }
+</script>
+</body>
+</html>

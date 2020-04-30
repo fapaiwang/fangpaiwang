@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{$seo.title}</title>
+    <meta name="keywords" content="{$seo.keys}" />
+    <meta name="description" content="{$seo.desc}" />
+    <script>
+        var browser = {
+            versions: function() {
+                var u = navigator.userAgent, app = navigator.appVersion;
+                return {     //移动终端浏览器版本信息
+                    trident: u.indexOf('Trident') > -1, //IE内核
+                    presto: u.indexOf('Presto') > -1, //opera内核
+                    webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                    gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                    mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                    ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                    android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览器
+                    iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
+                    iPad: u.indexOf('iPad') > -1, //是否iPad
+                    webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
+                };
+            } (),
+            language: (navigator.browserLanguage || navigator.language).toLowerCase()
+        };
+        if (browser.versions.mobile) {
+            window.location.href = "{:config('mobile_domain')}"+window.location.pathname;
+        }
+    </script>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="__CSS__/reset.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/input.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css">
+    <script type="text/javascript" src="__STATIC__/js/jquery.min.js"></script>
+</head>
+<body>
+<div class="index">
+    {volist name='full_module' id='module'}
+        {:action('Module/index',['tpl'=>'module/index/'.$module['id']])}
+    {/volist}
+    <!-- 内容 S-->
+    <div class="wrap" style="display:none">
+        <div class="comWidth">
+            {volist name='fix_module' id='module'}
+            {:action('Module/index',['tpl'=>'module/index/'.$module['id']])}
+            {/volist}
+        </div>
+    </div>
+    <!-- 内容 E-->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <link rel="stylesheet" href="/static/newindex/common.css">
+
+    <link rel="stylesheet" href="/static/newindex/style.css">
+
+  
+	<script src="/static/newindex/jquery-1.11.2.min.js"></script>
+    <script src="/static/newindex/jquery.SuperSlide.2.1.1.js"></script>
+<div class="top_bom fix">
+   <div class="container auto fix">
+       <span>今日新增及动态</span>
+       <div class="txtScroll-top" style="margin-left:0px;">
+           <div class="bd">
+               <div class="tempWrap" style="overflow:hidden; position:relative; height:50px"><ul class="infoList" style="top: -757.588px; position: relative; padding: 0px; margin: 0px;">
+                 
+                 
+                 {fang:lists table='second_house' filed="id,title,estate_name,img,room,living_room,city,price,acreage,tags,update_time,qipai,marketprice" where="status = 1 and (fcstatus = 174 or fcstatus = 172 or fcstatus = 173) and timeout > $time" order="ordid asc,update_time desc" limit="20" id="vo"}
+                 <li style="height: 50px;"><a href="{:url('Second/detail',['id'=>$vo['id']])}" target="_blank">
+                       <span>{$vo.title}</span>
+                       <span>起拍价：<em class="n">{$vo.qipai|raw}万</em></span>
+                       <span>市场价：{$vo.price|raw}</span>
+                       <span>{$vo['update_time']|date="Y-m-d H:i:s"}</span>
+                       </a>
+                   </li>
+                                    
+                   {/fang:lists}
+                    
+               </ul></div>
+           </div>
+       </div>
+
+       <script type="text/javascript">
+           jQuery(".txtScroll-top").slide({titCell:".hd ul",mainCell:".bd ul",autoPage:true,effect:"top",autoPlay:true,vis:1,delayTime:1000});
+       </script>
+   </div>
+</div>
+<div class="content_content fix">
+    <div class="container auto fix">
+       <div class="one fix">
+           <div class="pub_tit_s fix tc">
+               <h1 class="n">推荐房源</h1>
+               <p>重点捡漏房源，低于市场价20%起</p>
+           </div>
+           <ul class="fix">
+                          
+						  
+						  
+			{fang:lists table='second_house' filed="id,title,estate_name,img,room,living_room,city,price,acreage,tags,update_time,qipai,marketprice" where="rec_position = 1 and timeout > $time" order="ordid asc,update_time asc" limit="3" id="vo"}
+             
+                           <li class="fix">
+                   <div class="pic"><a href="{:url('Second/detail',['id'=>$vo['id']])}" target="_blank"><img src="{:thumb($vo['img'],200,140)}" data-original="{:thumb($vo['img'],200,140)}" alt="{$vo.title}"></a></div>
+                   <div class="tit tc">
+                      <h4>{$vo.title}</h4>
+                      <span>{:getCityName($vo['city'])}</span>
+                      <span>{$vo.room}室{$vo.living_room}厅</span>
+                      <span>{$vo.acreage}{:config('filter.acreage_unit')}</span>
+                   </div>
+                   <div class="wz_bt fix"> <em class="n">{$vo.average_price|raw}</em> 万</div>
+               </li>
+                         
+            {/fang:lists}       
+                          
+						  
+              
+           </ul>
+           
+           <div class="more tc"><a href="" target="_blank">更多精选房源</a></div>
+       </div>
+      
+    
+      
+      
+      
+      <div class="one fix">
+            <div class="pub_tit_s fix tc">
+                <h1 class="n">今日新增</h1>
+                <p>实时更新，分秒必争</p>
+            </div>
+            <ul class="fix">
+              
+              {fang:lists table='second_house' filed="id,title,estate_name,img,room,living_room,city,price,acreage,tags,update_time,qipai,marketprice" where="status = 1 and timeout > $time" order="ordid asc,update_time desc" limit="3" id="vo"}
+              
+              <li class="fix">
+                   <div class="pic"><a href="{:url('Second/detail',['id'=>$vo['id']])}" target="_blank"><img original="{:thumb($vo['img'])}" src="{:thumb($vo['img'])}" style="display: inline;"></a></div>
+                   <div class="tit tc">
+                      <h4>{$vo.title}</h4>
+                       <span>{:getCityName($vo['city'])}</span>
+                      <span>{$vo.room}室{$vo.living_room}厅</span>
+                      <span>{$vo.acreage}{:config('filter.acreage_unit')}</span>
+                   </div>
+                   <div class="wz_bt fix"> <em class="n">{$vo.average_price|raw}</em> 万</div>
+               </li>
+                      {/fang:lists}       
+              
+                          </ul>
+            <div class="more tc"><a href="" target="_blank">更多今日新增</a></div>
+        </div>
+        <div class="two fix">
+            <div class="pub_tit_s fix tc">
+                <h1 class="n">今日成交</h1>
+                <p>直观展现  便宜才是真理</p>
+            </div>
+            <ul class="fix">
+               
+              {fang:lists table='second_house' filed="id,title,estate_name,img,room,living_room,city,price,cjprice,acreage,tags,update_time,qipai,marketprice" where="iscj = 159 and timeout > $time" order="ordid asc,update_time desc" limit="3" id="vo"}
+              <li class="fix">
+                    <div class="pic"><a href="" target="_blank"><img original="{:thumb($vo['img'])}" src="{:thumb($vo['img'])}" style="display: inline;"></a></div>
+                    <div class="tit tc">
+                        <h1> 61 <em class="n">万元</em></h1>
+                        <span>成交价 <em class="n ml10">{$vo.cjprice|raw}万</em></span>
+                        <span>市场价 <em class="n ml10">{$vo.price|raw}</em></span>
+                        <span>{$vo['update_time']|date="Y-m-d H:i:s"}</span>
+                        <span>{$vo.title}</span>
+                    </div>
+                    <div class="wz_bt fix">差额</div>
+                    <img alt="" class="ycj" original="/static/images/39.png" src="/static/newindex/39.png" style="display: block;">
+                </li>
+              
+              {/fang:lists}     
+              
+              
+                
+            </ul>
+
+            <div class="more tc"><a href="" target="_blank">更多今日成交</a></div>
+        </div>
+      
+        
+     
+       
+    </div>
+</div>
+
+
+  
+  
+  <div style="width:100%;height:600px; margin:0 auto">
+  
+  
+  
+  
+<link href="/appdw/home.min.css?v201905061" rel="stylesheet">
+
+
+<div class="section-wrap section-applayer" style="margin-top: 30px;padding-top: 1px;">
+  <div class="section">
+    <dl class="appintroduce">
+      <dt>
+        <img src="./appdw/app_tit.png" alt=""></dt>
+      <dd class="top" style="height:auto">
+        <p>房拍网APP是《房拍网》官方手机找房应用，提供找法拍房源、国有资产、涉诉房产、社会委托等法拍房，满足不同用户所需。同时，业主委托功能，也为卖房客户提供帮助。专业的法拍专员，为房拍网线上客户和业主提供全程服务。全心为您，只因更懂您。</p>
+      </dd>
+     
+      <dd class="bot" style="margin-left: 460px;">
+        <img src="./appdw/download_app2.jpg" alt="">
+        <p>
+          <a href="" class="ipone" target="_blank"></a>
+          <a target="_blank" href="" class="android"></a>
+        </p>
+      </dd>
+    </dl>
+  </div>
+</div>
+
+  
+  
+  
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  
+<div class="footer fix" style="background: url(/static/newindex/27.jpg) no-repeat center bottom;padding-top:0px">
+  <div class="container auto fix">
+      <div class="tops fix">
+          <div class="fl left">
+              <h1>房拍网</h1>
+              <p>您值得信赖的房产拍卖网站</p>
+          </div>
+          <div class="content fl">
+              <h5>全国服务资讯热线：</h5>
+              <span class="db">400 677 8008</span>
+              <p>地址：北京市东城区朝阳门南小街6号楼5层</p>
+          </div>
+          <div class="right fr">
+                             <div class="wx fl ml20">
+                    <span>微信服务号</span>
+                    <img width="95" height="95"  src="/static/newindex/e4bc77e686131aa5ae172feee84fba60.jpg" style="display: block;">
+                </div>
+                              <div class="wx fl ml20">
+                    <span>网站二维码</span>
+                    <img width="95" height="95"  src="/static/newindex/e40b1c66a5ead2969e97ed1e124c55a7.jpg" style="display: block;">
+                </div>
+                        </div>
+      </div>
+      <div class="copyright fix">
+          <div class="container auto fix">
+              <div class="fl">
+                  <a href="/jinjiren.html">服务专员</a><span>|</span>
+                                    <a href="/single-aboutus.html">加入我们</a><span>|</span>
+                                    <a href="/single-contacts.html">联系我们</a><span>|</span>
+                                    <a href="/single-huiyuanquanyi.html">法拍房贷款</a><span>|</span>
+                                    <a href="/single-yonghuxieyi.html">用户注册协议</a><span>|</span>
+                                    
+              </div>
+              <div class="fr">北京金铂顺昌资产管理有限公司 版权所有 京公网安备11010502030025号 京ICP备11017857号</div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/html" id="template">
+    {{# for(var i = 0, len = d.length; i < len; i++){ }}
+    <li>
+        <a href="{{d[i].url}}" target="_blank">
+            <span>
+                <em>{{d[i].price}}{{d[i].unit}}</em>
+                 {{d[i].title}}
+            </span>
+            <span class="address">
+                {{d[i].address}}
+            </span>
+        </a>
+    </li>
+    {{# } }}
+</script>
+<script type="text/javascript" src="__STATIC__/js/layer/laytpl.js"></script>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script type="text/javascript" src="__JS__/placeholder.js"></script>
+<script type="text/javascript" src="__JS__/echarts.common.min.js"></script>
+<script type="text/javascript" src="__JS__/common.js"></script>
+<script src="__STATIC__/js/plugins/jquery.lazyload.js"></script>
+
+<script>
+    $(function(){
+        $('#tab-1 li').on('mouseover',function(){
+            $(this).addClass('active').siblings().removeClass('active');
+            var index = $(this).index(),box = $('#house-content-box').children().hide().eq(index);
+            box.show();
+            var i = box.find('img'),s = i.attr('src'),o = i.data('original');
+            if(s != o)
+            {
+                box.find("img.lazy").lazyload({
+                    threshold : 100,
+                    effect : "fadeIn",
+                    event: "showstop"
+                });
+            }
+        });
+        $('#tab-2 li').on('mouseover',function(){
+            $(this).addClass('active').siblings().removeClass('active');
+            var index = $(this).index(),box = $('#content-box').children().hide().eq(index);
+            box.show();
+            var i = box.find('img'),s = i.attr('src'),o = i.data('original');
+            if(s != o)
+            {
+                box.find("img.lazy").lazyload({
+                    threshold : 100,
+                    effect : "fadeIn",
+                    event: "showstop"
+                });
+            }
+        });
+        $('#tab-3 li').on('mouseover',function(){
+            $(this).addClass('active').siblings().removeClass('active');
+            var index = $(this).index(),box = $('#second-content-box').children().hide().eq(index);
+            box.show();
+            var i = box.find('img'),s = i.attr('src'),o = i.data('original');
+            if(s != o)
+            {
+                box.find("img.lazy").lazyload({
+                    threshold : 100,
+                    effect : "fadeIn",
+                    event: "showstop"
+                });
+            }
+        });
+        $('#rec_house li').on('click',function(){
+            $(this).addClass('active').siblings().removeClass('active');
+            var index = $(this).index(),box = $('#rec_house_box').children().hide().eq(index);
+            box.show();
+            var i = box.find('img'),s = i.attr('src'),o = i.data('original');
+            if(s != o)
+            {
+                box.find("img.lazy").lazyload({
+                    threshold : 100,
+                    effect : "fadeIn",
+                    event: "showstop"
+                });
+            }
+        });
+        $("#second_tab .tit").on('click',function(){
+            var index = $(this).index();
+            $(this).addClass('active').siblings().removeClass('active');
+            $("#second_content").children().hide().eq(index).show();
+        });
+        $("#house_tab .tit").on('click',function(){
+            var index = $(this).index();
+            $(this).addClass('active').siblings().removeClass('active');
+            $("#house_content").children().hide().eq(index).show();
+        });
+        $("img.lazy").lazyload({
+            threshold : 100,
+            effect : "fadeIn"
+            //event: "scrollstop"
+        });
+    });
+</script>
+<script>
+    $(function(){
+        drawBroken('house','新盘价格走势');
+        drawBroken('second_house','二手房价格走势');
+        $("#keyword").on('keyup click',function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var keyword = $(this).val(),url = $(this).data('uri'),box = $('#search-box');
+            $.get(url,{keyword: $.trim(keyword)},function(result){
+                if(result.code == 1)
+                {
+                    var gettpl = document.getElementById('template').innerHTML;
+                    laytpl(gettpl).render(result.data, function(html){
+                        $('#search-box').html(html);
+                    });
+                    box.show();
+                }else{
+                    box.hide();
+                }
+            });
+        });
+        $(".filter-row").hover(function(){
+            var more = $(this).find(".filter-more"),c = more.html().replace(/[\r\n]/g,""),len = $.trim(c).length;
+            if(len > 0){
+                more.show();
+            }
+        },function(){
+            $(".filter-more").hide();
+        });
+        $('body').on('click',function(e){
+
+            $('#search-box').hide();
+        });
+        $(".search-type a").on('click',function(){
+            var url = $(this).data('uri');
+            $(this).addClass('active').siblings().removeClass('active');
+            $("#form").attr('action',url);
+        });
+        $(".search-btn").on('click',function(){
+            $("#form").submit();
+        });
+        $('.subscribe-btn').on('click',function(){
+            var user_name = $('#user_name'),mobile = $('#mobile'),house_name = $('#house_name').val(),
+                    reg   = /^1[3456789][0-9]{9}$/,url = $(this).data('uri'),token = $("input[name='__token__']").val();
+                if(!user_name.val())
+                {
+                    layer.msg('请填写您的姓名',{icon:2});
+                    user_name.focus();
+                    return false;
+                }else if(!reg.test(mobile.val())){
+                    layer.msg('请填写正确的手机号码',{icon:2});
+                    mobile.focus();
+                    return false;
+                }else{
+                    var param = {
+                      user_name : user_name.val(),
+                        mobile  : mobile.val(),
+                        house_name : house_name,
+                        model   : 'house',
+                        check_sms : 'no',
+                        __token__ : token
+                    };
+                    $.post(url,param,function(result){
+                        if(result.code == 1)
+                        {
+                            document.form.reset();
+                            layer.msg(result.msg,{icon:1});
+                        }else{
+                            layer.msg(result.msg,{icon:2});
+                        }
+                    });
+                }
+        });
+        $("#subscribe").Scroll({line:4,speed:1000,timer:3000});
+    });
+    function drawBroken(id,name)
+    {
+        var dom = document.getElementById(id);
+        var myChart = echarts.init(dom);
+        var url = dom.getAttribute('data-uri');
+        myChart.showLoading({
+            text: '正在努力的读取数据中...'
+        });
+        var datas = '';
+        var title = '';
+        $.ajaxSettings.async = false;
+        $.get(url,function(data){
+            if(data.code==1){
+                title = data.month;
+                datas = data.data;
+            }
+        });
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: ''
+            },
+            tooltip: {},
+            legend: {
+                data:[]
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                top: '5%',
+                containLabel: true
+            },
+            xAxis: {
+                data: title
+            },
+            yAxis: {},
+            series: [{
+                name: '均价({:config("filter.second_price_unit")})',
+                type: 'line',
+                data: datas
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        myChart.hideLoading();
+    }
+    setTimeout(takeCount,1000);
+    function takeCount() {
+        setTimeout("takeCount()", 1000);
+        $(".time-remain").each(function(){
+            var obj = $(this);
+            var tms = obj.data("down");
+            if (tms>0) {
+                tms = parseInt(tms)-1;
+                var days = Math.floor(tms / (1 * 60 * 60 * 24));
+                var hours = Math.floor(tms / (1 * 60 * 60)) % 24;
+                var minutes = Math.floor(tms / (1 * 60)) % 60;
+                var seconds = Math.floor(tms / 1) % 60;
+
+                if (days < 0) days = 0;
+                if (hours < 0) hours = 0;
+                if (minutes < 0) minutes = 0;
+                if (seconds < 0) seconds = 0;
+                obj.find("[time_id='d']").html(days);
+                obj.find("[time_id='h']").html(hours);
+                obj.find("[time_id='m']").html(minutes);
+                obj.find("[time_id='s']").html(seconds);
+                obj.data("down",tms);
+            }
+        });
+    }
+</script>
+  
+  <style type="text/css">
+
+
+.floating_ck{position:fixed;right:20px;top:30%;z-index:999999}
+.floating_ck dl dd{position:relative;width:80px;height:80px;background-color:#00AC56;border:solid 3px #e3e3e3;text-align:center;background-repeat:no-repeat;border-radius: 5em;background-position:center 20%;cursor:pointer;margin-bottom: 8px;}
+.floating_ck dl dd:hover{background-color:#33a033;border:solid 3px #e3e3e3;}
+.floating_ck dl dd:hover .floating_left{display:block;}
+.consult{background-image:url(kf/images/img-21.png);}
+.words{background-image:url(kf/images/img-22.png);}
+.quote{background-image:url(kf/images/img-23.png);}
+.qrcord{background-image:url(kf/images/img-24.png); }
+.return{background-image:url(kf/images/fanhui.png);}
+.floating_ck dd span{color:#fff;display:block;padding-top:50px; font-size:13px}
+.floating_left{position:absolute;left:-180px;top:0px;width:160px;border-radius: 1em;height:80px;background-color:#33a033;border:solid 3px #e3e3e3;display:none;}
+.floating_left a{color:#fff;line-height:80px;}
+.floating_ewm{height:260px;top:-180px;}
+.floating_ewm i{background-image:url(kf/images/erweima.png);display:block;width:145px;height:145px;margin:auto;margin-top:7px;background-size:100%}
+.floating_ewm p{color:#fff;margin-top:5px;}
+.floating_ewm .qrcord_p01{font-size:12px;line-height:20px;}
+.floating_ewm .qrcord_p02{font-size:18px;}
+</style>
+
+<script type="text/javascript" src="/kf/js/top.js"></script>
+  
+  
+<div class="floating_ck">
+	<dl>
+    	<dt></dt>
+        <dd class="consult" style="display:none">
+        	<span>APP下载</span>
+        	<div class="floating_left" style="display:none"><a href="">下载官方APP</a></div>
+        </dd>
+        <dd class="words">
+        	<span><a href="/erf-39-0-0-0-0-0-0-0-0-0-0-7-1/types/0/jieduan/0/fcstatus/0.html" style="color:#fff">今日新增</a></span>
+            <div class="floating_left" style="display:none"><a href="">浏览今日新增房源</a></div>
+        </dd>
+        <dd class="quote">
+        	<span><a href="/erf-39-0-0-0-0-0-0-0-0-0-0-0-1/types/0/jieduan/0/fcstatus/175.html" style="color:#fff">今日成交</a></span>
+            <div class="floating_left" style="display:none"><a href="">浏览今日成交房源</a></div>
+        </dd>
+        <dd class="qrcord">
+        	<span>官方微信</span>
+            <div class="floating_left floating_ewm">
+            	<i></i>
+                <p class="qrcord_p01">扫一扫<br>关注我们</p>
+                <p class="qrcord_p02">全国免费服务热线<br><b>400-677-8008<b></p>
+            </div>
+        </dd>
+        <dd class="return">
+        	<span onClick="gotoTop();return false;">返回顶部</span>
+        </dd>
+    </dl>
+</div>
+
+  
+</body>
+</html>
